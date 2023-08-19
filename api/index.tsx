@@ -17,7 +17,7 @@ const start = async () => {
     // db.on('error', console.error.bind(console, 'MongoDB connection error:'))
     console.log('DB Connected')
     app.listen(PORT, () => {
-      console.log('Server running on : ' + process.env.PORT)
+      console.log('Server running on: ' + process.env.PORT)
     })
   } catch (error) {
     console.log('SERVER_OR_DB_ERROR' + error)
