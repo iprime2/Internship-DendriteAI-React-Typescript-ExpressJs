@@ -18,7 +18,7 @@ const ImageUpload: FC<ImageUploadProps> = ({}) => {
   }
 
   return (
-    <>
+    <div className='w-75'>
       <div className='input-group'>
         <input
           type='file'
@@ -29,11 +29,11 @@ const ImageUpload: FC<ImageUploadProps> = ({}) => {
           onChange={handleImageUpload}
         />
         <button
-          className='btn btn-outline-secondary'
+          className='btn btn-primary'
           type='button'
           id='inputGroupFileAddon04'
         >
-          Button
+          Generate
         </button>
       </div>
 
@@ -42,7 +42,7 @@ const ImageUpload: FC<ImageUploadProps> = ({}) => {
           <UploadedImage uploadedImage={uploadedImage} />
         </>
       )}
-    </>
+    </div>
   )
 }
 

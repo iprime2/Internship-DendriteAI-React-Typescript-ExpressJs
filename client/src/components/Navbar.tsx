@@ -4,7 +4,7 @@ import UserAvatar from './UserAvatar/UserAvatar'
 
 const Navbar = () => {
   return (
-    <nav className='navbar navbar-custom bg-body-tertiary'>
+    <nav className='navbar navbar-custom bg-body-tertiary px-3'>
       <div className='container-fluid'>
         <a className='navbar-brand' href='/'>
           <img
