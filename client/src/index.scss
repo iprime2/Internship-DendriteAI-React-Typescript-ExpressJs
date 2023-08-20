@@ -1,6 +1,6 @@
 @import '../node_modules/bootstrap/scss/functions';
 
-$primary: #900;
+$primary: rgb(0, 107, 153);
 $enable-shadows: true;
 $prefix: 'mo-';
 
@@ -51,4 +51,17 @@ body {
 
 .navbar-custom {
   background-color: rgb(205, 27, 27);
+  z-index: 1112;
+}
+
+.App {
+  width: 100vw;
+  height: 100vh;
+}
+
+.loader-div {
+  margin-top: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

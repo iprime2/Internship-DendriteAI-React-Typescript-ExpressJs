@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import Keycloak, { KeycloakInstance } from 'keycloak-js'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 import { keycloakConfig } from './utils'
 import AppContent from './components/AppContent'
-import Login from './components/Login'
-import Navbar from './components/Navbar'
+import Logout from './components/Logout'
+import Loading from './components/Loading'
 
 const App: React.FC = () => {
-  const [authenticated, setAuthenticated] = useState(false)
   const [error, setError] = useState<Error | null>(null)
 
   useEffect(() => {
@@ -16,11 +16,9 @@ const App: React.FC = () => {
 
       try {
         await keycloak.init({ onLoad: 'login-required' })
-        setAuthenticated(true)
       } catch (error) {
         console.error('Keycloak initialization error:', error)
         setError(error as Error)
-        setAuthenticated(false)
       }
     }
 
@@ -32,8 +30,14 @@ const App: React.FC = () => {
   }
 
   return (
-    <div>
-      <Navbar />
+    <div className='App'>
+      <BrowserRouter>
+        <Routes>
+          {/* <Route path='/' element={<Loading />} /> */}
+          <Route index path='/' element={<AppContent />} />
+          <Route path='/logout' element={<Logout />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   )
 }

@@ -1,12 +1,16 @@
 import React from 'react'
 import Navbar from './Navbar'
+import Main from './Main/Main'
+import Sidebar from './Sidebar/Sidebar'
 
 const AppContent = () => {
   return (
-    <div>
+    <div className='h-100 w-100'>
       <Navbar />
-      <h2>Welcome to AppContent!</h2>
-      {/* Render your app's protected content here */}
+      <div className='d-flex '>
+        <Sidebar />
+        <Main />
+      </div>
     </div>
   )
 }

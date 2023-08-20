@@ -1,0 +1,33 @@
+.pop-main {
+  position: relative;
+  z-index: 1005;
+
+  .img-avatar {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+
+    &:hover {
+      border: 1px solid #900;
+    }
+  }
+  .pop-menu {
+    position: absolute;
+    top: 50px;
+    width: 100px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    transition: all;
+    font-size: 14px;
+
+    .link-btn {
+      color: black;
+
+      &:hover {
+        background-color: #900;
+        color: white;
+        border-radius: 5px;
+        opacity: 70%;
+      }
+    }
+  }
+}
