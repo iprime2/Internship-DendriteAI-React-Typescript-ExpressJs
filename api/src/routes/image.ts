@@ -1,8 +1,12 @@
 import express from 'express'
+import multer from 'multer'
 
-import { image } from '../controller/image'
+import { imageGenerate, classify } from '../controller/image'
 
 export default (router: express.Router) => {
-  console.log('Routes image')
-  router.get('/image', image)
+  // Set up multer for handling file uploads
+  const storage = multer.memoryStorage()
+  const upload = multer({ storage })
+  router.post('/image', imageGenerate)
+  router.post('/classify', upload.single('image'), classify)
 }

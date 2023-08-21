@@ -1,15 +1,16 @@
-import bodyParser from 'body-parser'
-import express from 'express'
+import express, { Request, Response } from 'express'
 import http from 'http'
 import compression from 'compression'
 import cors from 'cors'
+
 import dotenv from 'dotenv'
+
 import connectDB from './db/dbConnect'
 import router from './routes'
 
 dotenv.config()
 
-const app = express()
+const app: express.Application = express()
 const PORT: number = parseInt(process.env.PORT || '1010')
 
 app.use(
@@ -17,11 +18,11 @@ app.use(
     credentials: true,
   })
 )
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.use(compression())
 
-app.use(compression)
-app.use(bodyParser)
-
-app.use('/', router)
+app.use('/api', router())
 
 const server = http.createServer(app)
 
