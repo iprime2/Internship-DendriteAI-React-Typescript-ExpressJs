@@ -1,5 +1,9 @@
 import express from 'express'
+import * as tf from '@tensorflow/tfjs-node'
 import * as mobilenet from '@tensorflow-models/mobilenet'
+import { UploadedFile } from 'express-fileupload'
+
+import { loadModel } from '../loadModel'
 
 export const imageGenerate = async (
   req: express.Request,
@@ -15,19 +19,20 @@ export const imageGenerate = async (
 }
 
 export const classify = async (req: express.Request, res: express.Response) => {
+  //@ts-ignore
+  // const { image } = req
+  const model = await loadModel()
+
   try {
-    const model = await mobilenet.load()
     //@ts-ignore
-    const { image } = req
-
-    console.log(image)
-
-    const result = await model.classify(image)
-
-    console.log(result)
-    res.status(200).json(result)
+    const imageObject = req.files?.image as UploadedFile
+    console.log(imageObject)
+    // const tfimage = tf.node.decodeImage(imageObject.data) as tf.Tensor3D
+    // const result = model.classify(tfimage)
+    // old
+    // const predictions = await model.classify(image)
+    // res.json(predictions)
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ error: 'Internal server error' })
+    res.status(500).send('An error occurred during image classification.')
   }
 }

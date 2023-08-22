@@ -24,8 +24,11 @@
   },
   "dependencies": {
     "@tensorflow-models/mobilenet": "^2.1.1",
+    "@tensorflow/tfjs": "^4.10.0",
     "@tensorflow/tfjs-converter": "^4.10.0",
     "@tensorflow/tfjs-core": "^4.10.0",
+    "@tensorflow/tfjs-node": "^4.10.0",
+    "@types/express-fileupload": "^1.4.1",
     "axios": "^1.4.0",
     "body-parser": "^1.20.2",
     "canvas": "^2.11.2",
