@@ -24,7 +24,12 @@ const UploadedImage: FC<UploadedImageProps> = ({ uploadedImage }) => {
   return (
     <div className='w-100 mt-3'>
       <h4 className='fw-bold'>Uploaded Image:</h4>
-      <img className='w-100' src={uploadedImage} alt='Selected' />
+      <img
+        className='w-100'
+        src={uploadedImage}
+        alt='Selected'
+        crossOrigin='anonymous'
+      />
       <div>
         <button
           type='button'

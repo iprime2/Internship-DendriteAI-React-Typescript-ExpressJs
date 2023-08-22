@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@tensorflow-models/mobilenet": "^2.1.1",
+    "@tensorflow/tfjs": "^4.10.0",
+    "@tensorflow/tfjs-converter": "^4.10.0",
+    "@tensorflow/tfjs-core": "^4.10.0",
     "@types/jest": "^27.5.2",
     "@types/node": "^16.18.41",
     "@types/react": "^18.2.20",
