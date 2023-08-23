@@ -3,12 +3,9 @@ import http from 'http'
 import compression from 'compression'
 import cors from 'cors'
 import dotenv from 'dotenv'
-// import * as tf from '@tensorflow/tfjs'
-import * as mobilenet from '@tensorflow-models/mobilenet'
-import * as tf from '@tensorflow/tfjs-node'
 import multer from 'multer'
-
-import fileUpload from 'express-fileupload'
+import * as tf from '@tensorflow/tfjs-node'
+import * as mobilenet from '@tensorflow-models/mobilenet'
 
 import connectDB from './db/dbConnect'
 import router from './routes'
@@ -29,43 +26,48 @@ app.use(compression())
 
 app.use('/api', router())
 
-const upload = multer({ dest: 'uploads/' })
+// Set up Multer for file uploads
+const storage = multer.memoryStorage()
+const upload = multer({ storage: storage })
 
-interface Prediction {
-  className: string
-  probability: number
-}
-
-app.post('/upload', upload.single('image'), async (req, res) => {
-  if (!req.file) {
-    return res.status(400).send('No file uploaded')
-  }
-
-  const { path } = req.file
-
-  console.log(path)
-
+// Load the MobileNet model
+let model: mobilenet.MobileNet | null = null
+;(async () => {
   try {
-    // await tf.setBackend('tensorflow') // or 'tensorflow' for CPU, 'tensorflow-gpu' for GPU
-    await tf.ready()
-    const model = await mobilenet.load()
-    console.log('Model loaded')
-    //@ts-ignore
-    const imageBuffer = await tf.node.readFile(path)
-    const imageTensor = tf.node.decodeImage(imageBuffer)
-    const resizedImage = tf.image.resizeBilinear(imageTensor, [224, 224])
-    const expandedImage = resizedImage.expandDims(0)
-    //@ts-ignore
-    const preprocessedImage = mobilenet.preprocessInput(expandedImage)
+    await tf.ready() // Wait for TensorFlow.js to be ready
+    model = await mobilenet.load()
 
-    const predictions = (await model.classify(
-      preprocessedImage
-    )) as Prediction[]
-    res.json(predictions)
+    console.log('Model Loaded')
   } catch (error) {
-    res.status(500).send('An error occurred during image classification.')
+    console.log(error)
   }
-})
+})()
+
+// Route for image upload and prediction
+app.post(
+  '/classifyImage',
+  upload.single('image'),
+  async (req: Request, res: Response) => {
+    try {
+      if (!model) {
+        return res.status(500).json({ error: 'Model not loaded' })
+      }
+
+      //@ts-ignore
+      const buffer = req.file.buffer
+      const img = tf.node.decodeImage(buffer)
+      const batchedImg: tf.Tensor3D = tf.expandDims(img) as tf.Tensor3D
+
+      const predictions = await model.classify(batchedImg)
+      const result = predictions[0]
+
+      res.json({ className: result.className, probability: result.probability })
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ error: 'Internal server error' })
+    }
+  }
+)
 
 const server = http.createServer(app)
 
