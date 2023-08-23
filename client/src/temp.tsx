@@ -1,63 +1,69 @@
-import React, { ChangeEvent, FC, useRef, useState } from 'react'
+import React, { ChangeEvent, FC, useEffect, useRef, useState } from 'react'
+import * as tf from '@tensorflow/tfjs'
+import * as mobilenet from '@tensorflow-models/mobilenet'
 import axios from 'axios'
 
-interface ImageUploadProps {}
+interface TempImageUploadProps {}
 
 interface Prediction {
   className: string
   probability: number
 }
 
-const ImageUpload: FC<ImageUploadProps> = () => {
+const TempImageUpload: FC<TempImageUploadProps> = () => {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null)
-  const [selectedImage, setSelectedImage] = useState<File | null>(null)
   const [predictions, setPredictions] = useState<Prediction[]>([])
   const [loading, setLoading] = useState<boolean>(false)
+  const [model, setModel] = useState<mobilenet.MobileNet | null>(null)
 
   const imageRef = useRef<HTMLImageElement>(null)
 
-  const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (file) {
-      const url = URL.createObjectURL(file)
-      setUploadedImage(url)
-      setSelectedImage(file)
-    } else {
-      console.log('No image selected')
-    }
-  }
+  // useEffect(() => {
+  //   const loadModel = async () => {
+  //     try {
+  //       await tf.setBackend('webgl') // Set the backend to WebGL
+  //       await tf.ready() // Wait for TensorFlow.js to be ready
+  //       const mobilenetModel = await mobilenet.load()
+  //       setModel(mobilenetModel)
+  //       console.log('Model Loaded')
+  //     } catch (error) {
+  //       console.log(error)
+  //     }
+  //   }
+  //   loadModel()
+  // }, [])
 
-  const getCookie = (name: string) => {
-    const cookieValue = document.cookie.match(
-      '(^|;)\\s*' + name + '\\s*=\\s*([^;]+)'
-    )
-    return cookieValue ? cookieValue.pop() : ''
+  const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
+    const { files } = event.target
+    if (files && files.length > 0) {
+      const url = URL.createObjectURL(files[0])
+      setUploadedImage(url)
+    }
   }
 
   const onGenerate = async () => {
     setLoading(true)
-    console.log(selectedImage)
 
     try {
-      const formData = new FormData()
-      formData.append('image', selectedImage!)
+      // if (model && imageRef.current) {
+      //   const predictions = await model.classify(imageRef.current)
+      //   setPredictions(predictions)
+      //   console.log(predictions)
+      // }
 
-      const csrftoken = getCookie('csrftoken')
-      axios.defaults.headers.post['X-CSRFToken'] = csrftoken
+      if (imageRef.current) {
+        const formData = new FormData()
+        formData.append('image', imageRef.current!.src)
 
-      const response = await axios.post(
-        'http://127.0.0.1:8000/classifier/',
-        formData
-      )
-
-      const { categories, confidences } = response.data
-
-      const newPredictions: Prediction[] = categories.map(
-        (category: string, index: number) => ({
-          className: category,
-          probability: confidences[index],
+        const response = await axios.post('/classify', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         })
-      )
+
+        const { className, probability } = response.data
+        setPredictions([{ className, probability }])
+      }
     } catch (error) {
       console.log(error)
     } finally {
@@ -69,7 +75,6 @@ const ImageUpload: FC<ImageUploadProps> = () => {
     <div className='w-75'>
       <div className='input-group'>
         <input
-          name='image'
           type='file'
           className='form-control'
           id='inputGroupFile04'
@@ -115,4 +120,4 @@ const ImageUpload: FC<ImageUploadProps> = () => {
   )
 }
 
-export default ImageUpload
+export default TempImageUpload
